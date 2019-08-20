@@ -76,32 +76,29 @@
   # sound.enable = true;
   # hardware.pulseaudio.enable = true;
 
-  
+
   # Enable touchpad support.
   services.xserver = {
     enable = true;
 
     libinput.enable = true;
- 
+
     layout = "us";
     xkbVariant = "dvp";
     xkbOptions = "compose:ralt";
 
-    desktopManager = {
-      default = "xfce";
-      xterm.enable = false;
-      xfce = {
+    displayManager = {
+      slim = {
         enable = true;
-        noDesktop = true;
-        enableXfwm = false;
+        theme = pkgs.fetchurl {
+          url = "https://github.com/edwtjo/nixos-black-theme/archive/v1.0.tar.gz";
+          sha256 = "13bm7k3p6k7yq47nba08bn48cfv536k4ipnwwp1q1l2ydlp85r9d";
+        };
       };
     };
 
     windowManager = {
       default = "i3";
-      awesome = {
-        enable = false;
-      };
       i3 = {
         enable = true;
         extraPackages = [
