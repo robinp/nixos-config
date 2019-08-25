@@ -53,6 +53,15 @@
   #   wget vim
   # ];
 
+  programs.light.enable = true;
+  services.actkbd = {
+    enable = true;
+    bindings = [
+      { keys = [ 225 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -A 10"; }
+      { keys = [ 224 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -U 10"; }
+    ];
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -64,7 +73,9 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedTCPPorts = [ 21 ];
+  # networking.firewall.allowedTCPPortRanges = [ { from = 51000; to = 51999; } ];
+
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
@@ -73,9 +84,8 @@
   # services.printing.enable = true;
 
   # Enable sound.
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
-
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
 
   # Enable touchpad support.
   services.xserver = {
@@ -113,11 +123,14 @@
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
 
+  # Make sure it exists, for "light" command.
+  users.groups.video = {};
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.ron = {
     isNormalUser = true;
     home = "/home/ron";
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [ "wheel" "networkmanager" "video" ];
   };
 
   # This value determines the NixOS release with which your system is to be
