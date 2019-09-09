@@ -57,8 +57,8 @@
   services.actkbd = {
     enable = true;
     bindings = [
-      { keys = [ 225 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -A 10"; }
-      { keys = [ 224 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -U 10"; }
+      { keys = [ 224 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -A 10"; }
+      { keys = [ 225 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -U 10"; }
     ];
   };
 
@@ -98,12 +98,25 @@
     xkbOptions = "compose:ralt";
 
     displayManager = {
-      slim = {
+      lightdm = {
         enable = true;
+      };
+      slim = {
+        enable = false;
         theme = pkgs.fetchurl {
           url = "https://github.com/edwtjo/nixos-black-theme/archive/v1.0.tar.gz";
           sha256 = "13bm7k3p6k7yq47nba08bn48cfv536k4ipnwwp1q1l2ydlp85r9d";
         };
+      };
+    };
+
+    desktopManager = {
+      default = "xfce";
+      xterm.enable = false;
+      xfce = {
+        enable = true;
+        noDesktop = true;
+        enableXfwm = false;
       };
     };
 
@@ -119,6 +132,12 @@
     };
   };
 
+  services.dictd = {
+    enable = true;
+  };
+
+  virtualisation.virtualbox.host.enable = true;
+
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
@@ -130,7 +149,7 @@
   users.users.ron = {
     isNormalUser = true;
     home = "/home/ron";
-    extraGroups = [ "wheel" "networkmanager" "video" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "vboxusers" ];
   };
 
   # This value determines the NixOS release with which your system is to be
