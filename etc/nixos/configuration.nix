@@ -39,8 +39,13 @@
     };
   };
 
+  powerManagement.cpuFreqGovernor = "performance";
+
   # networking.hostName = "nixos"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless = {
+    enable = true;  # Enables wireless support via wpa_supplicant.
+    interfaces = [ "wlp3s0" ];
+  };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -49,7 +54,7 @@
   # Select internationalisation properties.
   console = {
     font = "Lat2-Terminus16";
-    keyMap = "dvp";
+    keyMap = "dvorak-programmer";  # 21.05 change
   };
   i18n.defaultLocale = "en_US.UTF-8";
 
