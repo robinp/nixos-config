@@ -5,9 +5,19 @@
 { config, pkgs, ... }:
 
 {
+  nix.trustedUsers = [ "root" "ron" ];
+
+  nix = {
+    package = pkgs.nixUnstable; # or versioned attributes like nix_2_4
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+   };
+
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+    ./hardware-configuration.nix
+    ./cachix.nix
     ];
 
   fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
@@ -21,14 +31,13 @@
   # boot.loader.efi.efiSysMountPoint = "/boot/EFI";
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices = [
-    {
-      name = "cryptoroot";
+  boot.initrd.luks.devices = {
+    cryptoroot = {
       preLVM = true;
       allowDiscards = true;
       device = "/dev/disk/by-uuid/a71c0266-125e-4e82-8686-a7213505b2be";
-    }
-  ];
+    };
+  };
 
   # networking.hostName = "nixos"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -38,11 +47,11 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
-  i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "dvp";
-    defaultLocale = "en_US.UTF-8";
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "dvp";
   };
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # Set your time zone.
   time.timeZone = "Europe/Budapest";
@@ -52,6 +61,8 @@
   # environment.systemPackages = with pkgs; [
   #   wget vim
   # ];
+
+  services.haveged.enable = true;
 
   programs.light.enable = true;
   services.actkbd = {
@@ -101,17 +112,10 @@
       lightdm = {
         enable = true;
       };
-      slim = {
-        enable = false;
-        theme = pkgs.fetchurl {
-          url = "https://github.com/edwtjo/nixos-black-theme/archive/v1.0.tar.gz";
-          sha256 = "13bm7k3p6k7yq47nba08bn48cfv536k4ipnwwp1q1l2ydlp85r9d";
-        };
-      };
+      defaultSession = "xfce+i3";
     };
 
     desktopManager = {
-      default = "xfce";
       xterm.enable = false;
       xfce = {
         enable = true;
@@ -121,7 +125,6 @@
     };
 
     windowManager = {
-      default = "i3";
       i3 = {
         enable = true;
         extraPackages = [
@@ -138,6 +141,8 @@
 
   virtualisation.virtualbox.host.enable = true;
 
+  virtualisation.docker.enable = true;
+
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
@@ -149,7 +154,7 @@
   users.users.ron = {
     isNormalUser = true;
     home = "/home/ron";
-    extraGroups = [ "wheel" "networkmanager" "video" "vboxusers" ];
+    extraGroups = [ "docker" "wheel" "networkmanager" "video" "vboxusers" ];
   };
 
   # This value determines the NixOS release with which your system is to be
