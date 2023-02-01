@@ -23,12 +23,19 @@
   fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
 
   # Use the GRUB 2 boot loader.
+  #
+  # Note 1: Actually disabled since conflicted with systemd-boot below, which was the
+  # effetive one.
+  #
+  # Note 2: hm, despite the order, in practice it seems grub was the effective.
+  # So rather enabling grub.
+  #
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.device = "nodev";
-  boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.efiSysMountPoint = "/boot/EFI";
+  boot.loader.systemd-boot.enable = false;
+  boot.loader.efi.efiSysMountPoint = "/boot/EFI";
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.luks.devices = {
@@ -39,7 +46,7 @@
     };
   };
 
-  powerManagement.cpuFreqGovernor = "performance";
+  powerManagement.cpuFreqGovernor = "schedutil";
 
   # networking.hostName = "nixos"; # Define your hostname.
   networking.wireless = {
@@ -68,6 +75,8 @@
   # ];
 
   services.haveged.enable = true;
+
+  services.tailscale.enable = true;
 
   programs.light.enable = true;
   services.actkbd = {
